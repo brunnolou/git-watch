@@ -11,21 +11,6 @@ const stripAnsi = require("strip-ansi");
 // term.fullscreen();
 term.hideCursor();
 
-const getColor = status => {
-  const colorStatus = {
-    "??": chalk.gray(status),
-    "A ": chalk.green(status),
-    MM: chalk.green(status[0]) + chalk.yellow(status[1]),
-    AM: chalk.green(status[0]) + chalk.yellow(status[1]),
-    "M ": chalk.green(status[0]) + " ",
-    " M": " " + chalk.yellow(status[1]),
-    " A": chalk.red(status),
-    UU: chalk.red(status)
-  };
-
-  return colorStatus[status];
-};
-
 term.cyan("What do you want to watch?\n");
 
 var items = ["status", "branch", "log"];
@@ -35,7 +20,8 @@ term.singleColumnMenu(items, function(error, response) {
 
   setInterval(() => {
     term.moveTo(1, 1);
-    term.green("Watching: " + response.selectedText + "\n");
+		term.green("Watching: " + response.selectedText + "\n");
+		term.moveTo(1, 2);
 
     switch (response.selectedText) {
       case "log":
@@ -64,7 +50,7 @@ term.singleColumnMenu(items, function(error, response) {
         });
         break;
 
-      case "status":
+      case "stp":
         execa.shell("git status -s").then(result => {
           if (!result.stdout) {
             term.eraseDisplayBelow.green(
@@ -80,7 +66,7 @@ term.singleColumnMenu(items, function(error, response) {
             const status = line.substr(0, 2);
             const path = line.substr(2);
 
-            term.eraseDisplayBelow(getColor(status) + " " + path);
+            term.eraseDisplayBelow(status + " " + path);
 
             term("\n");
           });
